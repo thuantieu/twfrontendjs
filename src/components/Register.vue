@@ -1,8 +1,11 @@
 <template>
   <v-container>
-    <v-card class="mx-auto" max-width="600">
+    <v-card class="elevation-12 mx-auto" max-width="600">
+      <v-toolbar dark color="primary">
+        <v-toolbar-title>Register</v-toolbar-title>
+      </v-toolbar>
       <v-card-text>
-        <v-form ref="registerForm" @submit="submitForm" lazy-validation>
+        <v-form ref="registerForm" lazy-validation>
           <v-row>
             <v-col cols="12" sm="6" md="6">
               <v-text-field
@@ -58,11 +61,7 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
-              <v-btn
-                x-large
-                block
-                color="success"
-                @click="submitForm"
+              <v-btn block x-large @click="submitForm" color="success"
                 >Register</v-btn
               >
             </v-col>
@@ -74,6 +73,7 @@
 </template>
 
 <script>
+import { HTTP } from "@/plugins/http-common.js";
 export default {
   name: "Register",
   computed: {
@@ -82,29 +82,34 @@ export default {
     },
   },
   methods: {
-    validate() {
-      if (this.$refs.loginForm.validate()) {
-        // submit form to server/API here...
-      }
+    async submitForm() {
+      const userdata = {
+        name: `${this.firstName} ${this.lastName}`,
+        email: this.email,
+        password: this.password,
+      };
+      await HTTP.post("api/users", userdata).then((res, err) => {
+        if (err) {
+          this.$refs.registerForm.reset();
+          this.$store.dispatch("changeDialog", true);
+          this.$store.dispatch(
+            "changeDialogMessage",
+            "Please input your info again!"
+          );
+          // this.$store.dispatch("changeDialog", {
+          //   dialog: true,
+          //   message: "Please input your info again!",
+          // });
+        }
+        let resMessage = res.data;
+        this.$refs.registerForm.reset();
+        this.$router.push({ path: "/" });
+        this.$store.dispatch("changeDialog", true);
+        this.$store.dispatch("changeDialogMessage", resMessage.toString());
+      });
     },
-    reset() {
-      this.$refs.form.reset();
-    },
-    resetValidation() {
-      this.$refs.form.resetValidation();
-    },
-    submitForm(){
-         // Your form submission
-         this.$refs.registerForm.reset(); // This will clear that form
-      }
   },
   data: () => ({
-    dialog: true,
-    tab: 0,
-    tabs: [
-      { name: "Login", icon: "mdi-account" },
-      { name: "Register", icon: "mdi-account-outline" },
-    ],
     valid: false,
 
     firstName: "",

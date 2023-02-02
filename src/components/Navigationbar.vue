@@ -1,6 +1,6 @@
 <template>
   <v-app-bar color="#E0E0E0" density="compact">
-    <!-- <v-app-bar color="secondary" density="compact"> -->
+    
     <template v-slot:prepend>
       <v-app-bar-nav-icon
         color="primary"
@@ -22,6 +22,9 @@
         <v-btn variant="flat" @click="goRegister" color="green-darken-2">Sign Up</v-btn>
       </template>
       <template v-if="$store.state.islogin">
+        <v-btn @click="goNewPost" variant="flat" prepend-icon="mdi-feather" color="primary"
+          >Create a post</v-btn
+        > &nbsp;
         <v-btn @click="goLogout" variant="flat" append-icon="mdi-logout" color="green-darken-2"
           >logout</v-btn
         >
@@ -44,14 +47,18 @@ export default {
     },
     goLogin() {
       this.$router.push({ path: "/login" });
-      this.$store.dispatch("changeLogin", true);
+      // this.$store.dispatch("changeLogin", true);
     },
     goLogout() {
       this.$router.push({ path: "/" });
       this.$store.dispatch("changeLogin", false);
+      this.$store.dispatch("setToken", '');
     },
     goRegister () {
       this.$router.push({ path: "/register" });
+    },
+    goNewPost() {
+      this.$router.push({ path: "/newpost" });
     }
   },
   data: () => ({

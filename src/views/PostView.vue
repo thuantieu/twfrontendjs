@@ -1,14 +1,13 @@
 <template>
-    <Register />
+    <Post />
 </template>
 
 <script>
-import Register from '@/components/Register.vue';
-
+import Post from '@/components/extras/Post.vue';
 export default {
-    name: 'RegisterView',
+    name: "PostView",
     components: {
-        Register
+        Post
     }
 }
 </script>
